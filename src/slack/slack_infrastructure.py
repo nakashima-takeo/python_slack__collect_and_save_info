@@ -70,6 +70,8 @@ class SlackInfrastructure:
         response = requests.post(self.post_message_url, headers=self.headersAuth, params=payload)
         response.raise_for_status()
         message = response.json()
+        if not message["ok"]:
+            raise ValueError("メッセージの送信に失敗しました")
         return message
 
     def get_user_info(self, user_id: str) -> Dict:
