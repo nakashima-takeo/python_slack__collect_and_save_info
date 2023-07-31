@@ -1,7 +1,9 @@
 from slack_infrastructure import SlackInfrastructure
 
+
 def test_preparation() -> SlackInfrastructure:
-  return SlackInfrastructure()
+    return SlackInfrastructure()
+
 
 def channel_history():
     slack = test_preparation()
@@ -11,6 +13,7 @@ def channel_history():
 
     for message in messages:
         print(message["text"] + "\n")
+
 
 def post_message():
     slack = test_preparation()
