@@ -6,7 +6,7 @@ import requests
 
 
 class SlackInfrastructure:
-    def __init__(self):
+    def __init__(self) -> None:
         # slack_api_token = get_secret("slack", "slack_app_token")
         slack_api_token = input("Slack API Token: ")
         if slack_api_token is None:
@@ -47,6 +47,8 @@ class SlackInfrastructure:
         }
         response = requests.get(self.history_url, headers=self.headersAuth, params=payload)
         response.raise_for_status()
+        if not response.json()["ok"]:
+            raise ValueError("チャンネルの取得に失敗しました")
         messages = response.json()["messages"]
         return messages
 
@@ -72,7 +74,7 @@ class SlackInfrastructure:
         message = response.json()
         if not message["ok"]:
             raise ValueError("メッセージの送信に失敗しました")
-        return message
+        return message["message"]
 
     def get_user_info(self, user_id: str) -> Dict:
         payload: Dict = {
