@@ -11,12 +11,14 @@ provider:
   name: aws
   runtime: python3.9
   region: ap-northeast-1
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - secretsmanager:GetSecretValue
-      Resource:
-        - "*"
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource:
+            - "*"
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
@@ -53,7 +55,7 @@ provider:
 
 functions:
   save_slack_messages_to_s3:
-    handler: src/get_slack_messages_to_s3.py
+    handler: get_slack_message.get_slack_messages_to_s3
     events:
     # 日本時間で毎日12時に実行
       - schedule: cron(0 3 * * ? *)
