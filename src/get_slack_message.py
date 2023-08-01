@@ -27,7 +27,7 @@ def save_slack_messages_to_s3() -> None:
 
     # S3にテキストファイルをアップロードする
     s3 = S3()
-    s3.write_txt("slack_task_bucket_temp", "slack", messages_text)
+    s3.write_txt("slack-task-temp-bucket-nakashima-takeo", "slack", messages_text)
 
     # # Slackにメッセージを投稿する
     slack.post_message(report_channel_name, "メッセージを保存しました")

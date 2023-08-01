@@ -7,6 +7,10 @@ service: python-slack-task
 # Check out our docs for more details
 frameworkVersion: '3'
 
+custom:
+  bucketName: slack-task-temp-bucket-nakashima-takeo
+
+
 provider:
   name: aws
   runtime: python3.9
@@ -17,6 +21,11 @@ provider:
         - Effect: Allow
           Action:
             - secretsmanager:GetSecretValue
+          Resource:
+            - "*"
+        - Effect: Allow
+          Action:
+            - s3:PutObject
           Resource:
             - "*"
 # you can overwrite defaults here
@@ -58,7 +67,7 @@ functions:
     handler: get_slack_message.get_slack_messages_to_s3
     events:
     # 日本時間で毎日12時に実行
-      - schedule: cron(0 3 * * ? *)
+      - schedule: cron(0 3 ? * MON-FRI *)
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -98,6 +107,26 @@ functions:
 #    Define function environment variables here
 #    environment:
 #      variable2: value2
+
+resources:
+  Resources:
+    S3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.bucketName}
+        AccessControl: PublicRead
+    S3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: S3Bucket
+        PolicyDocument:
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action: s3:GetObject
+              Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
 
 # you can add CloudFormation resource templates here
 #resources:
