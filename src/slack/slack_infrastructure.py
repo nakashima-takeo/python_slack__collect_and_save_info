@@ -6,7 +6,7 @@ import requests
 
 
 class SlackInfrastructure:
-    def __init__(self) -> None:
+    def __init__(self):
         # slack_api_token = get_secret("slack", "slack_app_token")
         slack_api_token = input("Slack API Token: ")
         if slack_api_token is None:
@@ -40,11 +40,13 @@ class SlackInfrastructure:
         channels = response.json()["channels"]
         return channels
 
-    def get_channel_history(self, channel_id: str) -> List[Dict]:
+    def get_channel_history(self, channel_id: str, from_unixtime: int | None = None) -> List[Dict]:
         payload: Dict = {
             "channel": channel_id,
             "limit": 1000,
         }
+        if from_unixtime is not None:
+            payload["oldest"] = from_unixtime
         response = requests.get(self.history_url, headers=self.headersAuth, params=payload)
         response.raise_for_status()
         if not response.json()["ok"]:

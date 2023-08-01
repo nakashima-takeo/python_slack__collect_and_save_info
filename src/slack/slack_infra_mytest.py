@@ -1,4 +1,5 @@
-from slack_infrastructure import SlackInfrastructure
+from slack.slack_infrastructure import SlackInfrastructure
+from slack.slack_usecase import SlackUsecase
 
 
 class SlackInfraMyTest:
@@ -36,15 +37,31 @@ class SlackInfraMyTest:
                 break
 
 
-slack_test = SlackInfraMyTest()
+class SlackUsecaseMyTest:
+    def __init__(self):
+        self.slack = SlackUsecase()
+
+    def search_messages(self):
+        messages = self.slack.search_messages("annotation新卒", ["こんにちは", "こんばんは", "API"], 10000)
+        for message in messages:
+            print(message["text"])
+
+
 # slack_infraの簡易的なテスト
+slack_infra_test = SlackInfraMyTest()
 print("=================slack_infraの簡易的なテスト=================")
 print("新卒チャンネルから最新のメッセージを取得")
-slack_test.channel_history()
+slack_infra_test.channel_history()
 print("\n" + "ユーザー情報を取得")
-slack_test.get_user_info()
-print("\n" + "新卒チャンネルにメッセージを送信")
-slack_test.post_message()
+slack_infra_test.get_user_info()
+# print("\n" + "新卒チャンネルにメッセージを送信")
+# slack_infra_test.post_message()
 print("\n" + "スレッドのメッセージを取得")
-slack_test.get_thread_history()
+slack_infra_test.get_thread_history()
+print("\n" + "=========================================================")
+# slack_usecaseの簡易的なテスト
+slack_usecase_test = SlackUsecaseMyTest()
+print("=================slack_usecaseの簡易的なテスト=================")
+print("新卒チャンネルから「こんにちは」「こんばんは」「API」を含むメッセージを取得")
+slack_usecase_test.search_messages()
 print("\n" + "=========================================================")
