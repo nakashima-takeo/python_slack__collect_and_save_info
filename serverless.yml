@@ -26,7 +26,11 @@ provider:
         - Effect: Allow
           Action:
             - s3:CreateBucket
+            - s3:DeleteBucket
             - s3:PutObject
+            - s3:DeleteObject
+            - s3:ListBucket
+            - s3:ListObjects
           Resource:
             - "*"
 # you can overwrite defaults here
@@ -65,7 +69,7 @@ provider:
 
 functions:
   save_slack_messages_to_s3:
-    handler: get_slack_message.get_slack_messages_to_s3
+    handler: src/get_slack_message.get_slack_messages_to_s3
     events:
     # 日本時間で毎日12時に実行
       - schedule: cron(0 3 ? * MON-FRI *)
@@ -115,19 +119,23 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:custom.bucketName}
-        AccessControl: PublicRead
-    S3BucketPolicy:
-      Type: AWS::S3::BucketPolicy
-      Properties:
-        Bucket:
-          Ref: S3Bucket
-        PolicyDocument:
-          Statement:
-            - Sid: PublicReadGetObject
-              Effect: Allow
-              Principal: "*"
-              Action: s3:GetObject
-              Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
+    # S3BucketPolicy:
+    #   Type: AWS::S3::BucketPolicy
+    #   Properties:
+    #     Bucket:
+    #       Ref: S3Bucket
+    #     PolicyDocument:
+    #       Statement:
+    #         - Sid: PublicReadGetObject
+    #           Effect: Allow
+    #           Principal: "*"
+    #           Action: s3:GetObject
+    #           Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
 
 # you can add CloudFormation resource templates here
 #resources:
