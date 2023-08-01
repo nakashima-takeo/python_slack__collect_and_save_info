@@ -52,8 +52,11 @@ provider:
 #    - include-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  save_slack_messages_to_s3:
+    handler: src/get_slack_messages_to_s3.py
+    events:
+    # 日本時間で毎日12時に実行
+      - schedule: cron(0 3 * * ? *)
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
