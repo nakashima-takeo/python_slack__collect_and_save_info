@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Dict
 
-from slack_infrastructure import SlackInfrastructure
+from .slack_infrastructure import SlackInfrastructure
 
 
 class SlackUsecase:

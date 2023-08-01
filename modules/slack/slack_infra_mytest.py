@@ -1,5 +1,5 @@
-from slack_infrastructure import SlackInfrastructure
-from slack_usecase import SlackUsecase
+from .slack_infrastructure import SlackInfrastructure
+from .slack_usecase import SlackUsecase
 
 
 class SlackInfraMyTest:
