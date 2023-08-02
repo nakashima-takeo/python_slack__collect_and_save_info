@@ -2,13 +2,13 @@ from typing import Dict, List
 
 import requests
 
-# from aws import get_secret
+from modules.aws.secrets_manager import get_secret
 
 
 class SlackInfrastructure:
     def __init__(self):
-        # slack_api_token = get_secret("slack", "slack_app_token")
-        slack_api_token = input("Slack API Token: ")
+        slack_api_token = get_secret("slack", "slack_app_token")
+        # slack_api_token = input("Slack API Token: ")
         if slack_api_token is None:
             raise ValueError("SLACK_API_TOKENが設定されていません")
         self.token = slack_api_token
