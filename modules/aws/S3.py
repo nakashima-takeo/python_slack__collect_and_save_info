@@ -9,7 +9,7 @@ class S3:
         self.s3_client = boto3.client("s3")
 
     def write_txt(self, bucket_name: str, file_title_head: str, file_contents: str) -> str:
-        key = f"{file_title_head}_" + datetime.now().strftime("%Y-%m-%d-%H") + ".txt"
+        key = f"{file_title_head}_" + datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + ".txt"
         obj = self.s3.Object(bucket_name, key)
         obj.put(Body=file_contents)
         public_url = self.__get_public_url(bucket_name, key)
