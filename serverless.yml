@@ -126,9 +126,9 @@ resources:
       Properties:
         BucketName: ${self:custom.bucketName}
         PublicAccessBlockConfiguration:
-          BlockPublicAcls: false
-          BlockPublicPolicy: false
-          IgnorePublicAcls: false
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
           RestrictPublicBuckets: false
     S3BucketPolicy:
       Type: AWS::S3::BucketPolicy
