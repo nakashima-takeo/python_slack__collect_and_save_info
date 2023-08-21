@@ -23,9 +23,18 @@ def save_slack_messages_to_s3(event, context) -> None:
     # メッセージを一つのstringに整える
     messages_text: str = ""
     for message in messages:
+        thread_messages = slack.get_thread_history(source_channel_name, message)
         messages_text += datetime.datetime.fromtimestamp(float(message["ts"])).strftime("%Y/%m/%d %H:%M:%S") + "\n"
         messages_text += slack.get_user(message["user"])["real_name"] + "\n"
         messages_text += message["text"] + "\n"
+        for thread_message in thread_messages:
+            if thread_message["ts"] == message["ts"]:
+                continue
+            messages_text += (
+                "     " + datetime.datetime.fromtimestamp(float(thread_message["ts"])).strftime("%Y/%m/%d %H:%M:%S") + "\n"
+            )
+            messages_text += "     " + slack.get_user(thread_message["user"])["real_name"] + "\n"
+            messages_text += "     " + thread_message["text"] + "\n"
         messages_text += "\n"
 
     # S3にテキストファイルをアップロードする

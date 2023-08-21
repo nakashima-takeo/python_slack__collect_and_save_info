@@ -57,7 +57,7 @@ class SlackInfrastructure:
     def get_thread_history(self, channel: Dict, original_message: Dict) -> List[Dict]:
         payload: Dict = {
             "channel": channel["id"],
-            "ts": original_message["thread_ts"],
+            "ts": original_message["ts"],
         }
         response = requests.get(self.thread_url, headers=self.headersAuth, params=payload)
         response.raise_for_status()

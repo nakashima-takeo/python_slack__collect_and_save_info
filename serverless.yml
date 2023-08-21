@@ -79,6 +79,7 @@ functions:
       SOURCE_CHANNEL_NAME: annotation新卒
       REPORT_CHANNEL_NAME: nakashimatakeo通知
       SEARCH_WORDS: こんにちは,こんばんは,API
+    timeout: 120
     events:
       # 日本時間で毎日12時に実行
       - schedule: cron(0 3 ? * MON-FRI *)

@@ -19,6 +19,13 @@ class SlackUsecase:
         messages = [message for message in messages if any(word in message["text"] for word in search_words)]
         return messages
 
+    def get_thread_history(self, channel_name: str, original_message: Dict) -> list[Dict]:
+        channel = self.slack_infrastructure.get_a_channel(channel_name)
+        if channel is None:
+            raise ValueError(f"チャンネル「{channel_name}」が見つかりませんでした")
+        messages = self.slack_infrastructure.get_thread_history(channel, original_message)
+        return messages
+
     def get_user(self, user_id: str) -> Dict:
         # 既に取得済みのユーザー情報を取得
         user = next((user for user in self.users if user["id"] == user_id), None)
