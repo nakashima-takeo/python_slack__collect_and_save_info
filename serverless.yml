@@ -5,11 +5,10 @@ service: python-slack-task
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 custom:
   bucketName: slack-task-temp-bucket-nakashima-takeo
-
 
 provider:
   name: aws
@@ -76,8 +75,12 @@ provider:
 functions:
   save_slack_messages_to_s3:
     handler: src/get_slack_message.save_slack_messages_to_s3
+    environment:
+      SOURCE_CHANNEL_NAME: annotation新卒
+      REPORT_CHANNEL_NAME: nakashimatakeo通知
+      SEARCH_WORDS: こんにちは,こんばんは,API
     events:
-    # 日本時間で毎日12時に実行
+      # 日本時間で毎日12時に実行
       - schedule: cron(0 3 ? * MON-FRI *)
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

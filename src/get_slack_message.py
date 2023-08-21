@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from modules.aws.S3 import S3
 from modules.slack.slack_usecase import SlackUsecase
@@ -6,9 +7,9 @@ from modules.slack.slack_usecase import SlackUsecase
 
 def save_slack_messages_to_s3(event, context) -> None:
     slack = SlackUsecase()
-    source_channel_name: str = "annotation新卒"
-    report_channel_name: str = "annotation新卒"
-    search_words: list[str] = ["こんにちは", "こんばんは", "API"]
+    source_channel_name: str = os.environ["SOURCE_CHANNEL_NAME"]
+    report_channel_name: str = os.environ["REPORT_CHANNEL_NAME"]
+    search_words: list[str] = os.environ["SEARCH_WORDS"].split(",")
     search_hours: int = 10000
     s3_bucket_name: str = "slack-task-temp-bucket-nakashima-takeo"
     s3_file_title_head: str = "slack"
