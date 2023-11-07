@@ -1,12 +1,12 @@
 import datetime
 import os
 
-from mymodules.aws.S3 import S3
-from mymodules.slack.slack_usecase import SlackUsecase
+from mymodules.aws import S3
+from mymodules.slack import Slack
 
 
 def save_slack_messages_to_s3(event, context) -> None:
-    slack = SlackUsecase()
+    slack = Slack()
     source_channel_name: str = os.environ["SOURCE_CHANNEL_NAME"]
     report_channel_name: str = os.environ["REPORT_CHANNEL_NAME"]
     search_words: list[str] = os.environ["SEARCH_WORDS"].split(",")
