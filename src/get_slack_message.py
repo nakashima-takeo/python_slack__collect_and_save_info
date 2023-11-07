@@ -1,8 +1,8 @@
 import datetime
 import os
 
-from modules.aws.S3 import S3
-from modules.slack.slack_usecase import SlackUsecase
+from mymodules.aws.S3 import S3
+from mymodules.slack.slack_usecase import SlackUsecase
 
 
 def save_slack_messages_to_s3(event, context) -> None:

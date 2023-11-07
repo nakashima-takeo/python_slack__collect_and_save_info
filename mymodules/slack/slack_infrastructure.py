@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import requests
 
-from modules.aws.secrets_manager import get_secret
+from mymodules.aws.secrets_manager import get_secret
 
 
 class SlackInfrastructure:
