@@ -17,11 +17,21 @@ provider:
   iam:
     role:
       statements:
+        # - Effect: Allow
+        #   Action:
+        #     - secretsmanager:GetSecretValue
+        #   Resource:
+        #     - "*"
         - Effect: Allow
           Action:
-            - secretsmanager:GetSecretValue
+            - ssm:GetParameter
           Resource:
-            - "*"
+            - arn:aws:ssm:ap-northeast-1:652139491397:parameter/python_slack_app_token
+        - Effect: Allow
+          Action:
+            - kms:Decrypt
+          Resource:
+            - arn:aws:kms:ap-northeast-1:652139491397:key/c9e4b218-8403-4d77-9aa3-713152bdfc50
         - Effect: Allow
           Action:
             - s3:CreateBucket

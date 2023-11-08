@@ -1,7 +1,7 @@
 import datetime
 import os
 
-from mymodules.aws import S3
+from mymodules.aws import S3, ParameterStore
 from mymodules.slack import Slack
 
 
@@ -38,7 +38,16 @@ def save_slack_messages_to_s3(event, context) -> None:
     --------
     >>> save_slack_messages_to_s3(event, context)
     """
-    slack = Slack()
+    # SlackTokenを取得する
+    parameter_store = ParameterStore("ap-northeast-1")
+    slack_token: str = parameter_store.get_parameter("python_slack_app_token")
+    if slack_token is None:
+        raise ValueError("SLACK_API_TOKENが設定されていません")
+
+    # Slackクラスを作成する
+    slack = Slack(slack_token)
+
+    # Slackの各種設定を取得する
     source_channel_name: str = os.environ["SOURCE_CHANNEL_NAME"]
     report_channel_name: str = os.environ["REPORT_CHANNEL_NAME"]
     search_words: list[str] = os.environ["SEARCH_WORDS"].split(",")
