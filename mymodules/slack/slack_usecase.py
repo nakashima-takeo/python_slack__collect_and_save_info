@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Dict
 
 from .slack_infrastructure import SlackInfrastructure
 
@@ -10,10 +9,10 @@ class SlackUsecase:
     """
 
     def __init__(self, slack_token: str):
-        self.__users: list[Dict] = []
+        self.__users: list[dict] = []
         self.__slack_infrastructure = SlackInfrastructure(slack_token)
 
-    def search_messages(self, channel_name: str, search_words: list[str], search_hours: int) -> list[Dict]:
+    def search_messages(self, channel_name: str, search_words: list[str], search_hours: int) -> list[dict]:
         """
         指定したチャンネル内のメッセージを検索します。
 
@@ -28,7 +27,7 @@ class SlackUsecase:
 
         Returns
         -------
-        list[Dict]
+        list[dict]
           検索結果のメッセージのリスト
         """
         channel = self.__slack_infrastructure.get_a_channel(channel_name)
@@ -40,7 +39,7 @@ class SlackUsecase:
         messages = [message for message in messages if any(word in message["text"] for word in search_words)]
         return messages
 
-    def get_thread_history(self, channel_name: str, original_message: Dict) -> list[Dict]:
+    def get_thread_history(self, channel_name: str, original_message: dict) -> list[dict]:
         """
         指定したチャンネル内のスレッドの履歴を取得します。
 
@@ -48,12 +47,12 @@ class SlackUsecase:
         ----------
         channel_name : str
           チャンネル名
-        original_message : Dict
+        original_message : dict
           スレッドの親メッセージ
 
         Returns
         -------
-        list[Dict]
+        list[dict]
           スレッドの履歴のリスト
         """
         channel = self.__slack_infrastructure.get_a_channel(channel_name)
@@ -62,7 +61,7 @@ class SlackUsecase:
         messages = self.__slack_infrastructure.get_thread_history(channel, original_message)
         return messages
 
-    def get_user(self, user_id: str) -> Dict:
+    def get_user(self, user_id: str) -> dict:
         """
         指定したユーザーの情報を取得します。
 
@@ -73,7 +72,7 @@ class SlackUsecase:
 
         Returns
         -------
-        Dict
+        dict
           ユーザー情報
         """
         # 既に取得済みのユーザー情報を取得

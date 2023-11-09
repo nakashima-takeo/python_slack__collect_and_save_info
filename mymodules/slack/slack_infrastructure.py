@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 import requests
 
 
@@ -22,7 +20,7 @@ class SlackInfrastructure:
         self.__thread_url = "https://slack.com/api/conversations.replies"
         self.__user_info_url = "https://slack.com/api/users.info"
 
-    def get_a_channel(self, channel_name: str) -> Dict | None:
+    def get_a_channel(self, channel_name: str) -> dict | None:
         """
         指定されたチャンネル名に一致するチャンネルを取得します。
 
@@ -33,7 +31,7 @@ class SlackInfrastructure:
 
         Returns
         -------
-        Dict or None
+        dict or None
           指定されたチャンネル名に一致するチャンネルの情報。見つからなかった場合はNone。
         """
         channels = self.get_all_channels()
@@ -41,16 +39,16 @@ class SlackInfrastructure:
             (channel for channel in channels if channel["name"] == channel_name),
         )
 
-    def get_all_channels(self) -> List[Dict]:
+    def get_all_channels(self) -> list[dict]:
         """
         全てのチャンネルの情報を取得します。
 
         Returns
         -------
-        List[Dict]
+        list[dict]
           全てのチャンネルの情報を含むリスト。
         """
-        payload: Dict = {
+        payload: dict = {
             "types": "public_channel, private_channel",
             "limit": 1000,
         }
@@ -61,7 +59,7 @@ class SlackInfrastructure:
         channels = response.json()["channels"]
         return channels
 
-    def get_channel_history(self, channel_id: str, from_unixtime: int | None = None) -> List[Dict]:
+    def get_channel_history(self, channel_id: str, from_unixtime: int | None = None) -> list[dict]:
         """
         指定されたチャンネルの履歴を取得します。
 
@@ -74,10 +72,10 @@ class SlackInfrastructure:
 
         Returns
         -------
-        List[Dict]
+        list[dict]
           指定されたチャンネルの履歴を含むリスト。
         """
-        payload: Dict = {
+        payload: dict = {
             "channel": channel_id,
             "limit": 1000,
         }
@@ -90,23 +88,23 @@ class SlackInfrastructure:
         messages = response.json()["messages"]
         return messages
 
-    def get_thread_history(self, channel: Dict, original_message: Dict) -> List[Dict]:
+    def get_thread_history(self, channel: dict, original_message: dict) -> list[dict]:
         """
         指定されたスレッドの履歴を取得します。
 
         Parameters
         ----------
-        channel : Dict
+        channel : dict
           スレッドが存在するチャンネルの情報
-        original_message : Dict
+        original_message : dict
           スレッドの親メッセージ
 
         Returns
         -------
-        List[Dict]
+        list[dict]
           指定されたスレッドの履歴を含むリスト。
         """
-        payload: Dict = {
+        payload: dict = {
             "channel": channel["id"],
             "ts": original_message["ts"],
         }
@@ -115,25 +113,25 @@ class SlackInfrastructure:
         messages = response.json()["messages"]
         return messages
 
-    def post_message(self, channel: Dict, text: str, original_message: Dict | None = None) -> Dict:
+    def post_message(self, channel: dict, text: str, original_message: dict | None = None) -> dict:
         """
         指定されたチャンネルにメッセージを投稿します。
 
         Parameters
         ----------
-        channel : Dict
+        channel : dict
           メッセージを投稿するチャンネルの情報
         text : str
           投稿するメッセージの本文
-        original_message : Dict or None
+        original_message : dict or None
           返信するメッセージの情報。指定しない場合はNone。
 
         Returns
         -------
-        Dict
+        dict
           投稿されたメッセージの情報。
         """
-        payload: Dict = {
+        payload: dict = {
             "channel": channel["id"],
             "text": text,
         }
@@ -146,7 +144,7 @@ class SlackInfrastructure:
             raise ValueError("メッセージの送信に失敗しました")
         return message["message"]
 
-    def get_user_info(self, user_id: str) -> Dict:
+    def get_user_info(self, user_id: str) -> dict:
         """
         指定されたユーザーの情報を取得します。
 
@@ -157,10 +155,10 @@ class SlackInfrastructure:
 
         Returns
         -------
-        Dict
+        dict
           指定されたユーザーの情報。
         """
-        payload: Dict = {
+        payload: dict = {
             "user": user_id,
         }
         response = requests.get(self.__user_info_url, headers=self.__headersAuth, params=payload)
