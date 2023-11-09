@@ -9,9 +9,9 @@ class SlackUsecase:
     Slackの機能を利用するためのユースケースクラスです。
     """
 
-    def __init__(self):
-        self.__users = []
-        self.__slack_infrastructure = SlackInfrastructure()
+    def __init__(self, slack_token: str):
+        self.__users: list[Dict] = []
+        self.__slack_infrastructure = SlackInfrastructure(slack_token)
 
     def search_messages(self, channel_name: str, search_words: list[str], search_hours: int) -> list[Dict]:
         """

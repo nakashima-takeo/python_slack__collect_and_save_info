@@ -9,9 +9,9 @@ class SecretsManager:
     AWS Secrets Managerを操作するクラス
     """
 
-    def __init__(self):
+    def __init__(self, region_name: str):
         # Secrets Managerクライアントを作成する
-        self.__secrets_client = boto3.client("secretsmanager", region_name="ap-northeast-1")
+        self.__secrets_client = boto3.client("secretsmanager", region_name=region_name)
 
     def get_secret(self, secret_category: str, secret_name: str) -> str | None:
         """

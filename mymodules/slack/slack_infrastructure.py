@@ -2,21 +2,16 @@ from typing import Dict, List
 
 import requests
 
-from mymodules.aws import SecretsManager
-
 
 class SlackInfrastructure:
     """
     Slack APIを利用するためのインフラストラクチャを提供するクラスです。
     """
 
-    def __init__(self):
-        __secrets_manager = SecretsManager()
-        __slack_api_token = __secrets_manager.get_secret("slack", "slack_app_token")
-        # __slack_api_token = input("Slack API Token: ")
-        if __slack_api_token is None:
+    def __init__(self, slack_token: str):
+        if slack_token is None:
             raise ValueError("SLACK_API_TOKENが設定されていません")
-        self.__token = __slack_api_token
+        self.__token = slack_token
         self.__headersAuth = {
             "Authorization": "Bearer " + str(self.__token),
         }

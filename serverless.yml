@@ -17,11 +17,21 @@ provider:
   iam:
     role:
       statements:
+        # - Effect: Allow
+        #   Action:
+        #     - secretsmanager:GetSecretValue
+        #   Resource:
+        #     - "*"
         - Effect: Allow
           Action:
-            - secretsmanager:GetSecretValue
+            - ssm:GetParameter
           Resource:
-            - "*"
+            - arn:aws:ssm:ap-northeast-1:652139491397:parameter/python_slack_app_token
+        - Effect: Allow
+          Action:
+            - kms:Decrypt
+          Resource:
+            - arn:aws:kms:ap-northeast-1:652139491397:key/c9e4b218-8403-4d77-9aa3-713152bdfc50
         - Effect: Allow
           Action:
             - s3:CreateBucket
@@ -76,6 +86,7 @@ functions:
   save_slack_messages_to_s3:
     handler: src/get_slack_message.save_slack_messages_to_s3
     environment:
+      REGION: ${self:provider.region}
       SOURCE_CHANNEL_NAME: annotation新卒
       REPORT_CHANNEL_NAME: nakashimatakeo通知
       SEARCH_WORDS: こんにちは,こんばんは,API
