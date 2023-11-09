@@ -7,11 +7,11 @@ class ParameterStore:
 
     Parameters
     ----------
-    region_name : str, optional
-      AWSリージョン名, by default "ap-northeast-1"
+    region_name : str
+      AWSリージョン名
     """
 
-    def __init__(self, region_name: str = "ap-northeast-1"):
+    def __init__(self, region_name: str):
         # Systems Managerクライアントを作成する
         self.__ssm = boto3.client("ssm", region_name=region_name)
 

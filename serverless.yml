@@ -86,6 +86,7 @@ functions:
   save_slack_messages_to_s3:
     handler: src/get_slack_message.save_slack_messages_to_s3
     environment:
+      REGION: ${self:provider.region}
       SOURCE_CHANNEL_NAME: annotation新卒
       REPORT_CHANNEL_NAME: nakashimatakeo通知
       SEARCH_WORDS: こんにちは,こんばんは,API

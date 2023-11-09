@@ -39,7 +39,8 @@ def save_slack_messages_to_s3(event, context) -> None:
     >>> save_slack_messages_to_s3(event, context)
     """
     # SlackTokenを取得する
-    parameter_store = ParameterStore("ap-northeast-1")
+    region = os.environ["REGION"]
+    parameter_store = ParameterStore(region)
     slack_token: str = parameter_store.get_parameter("python_slack_app_token")
     if slack_token is None:
         raise ValueError("SLACK_API_TOKENが設定されていません")
