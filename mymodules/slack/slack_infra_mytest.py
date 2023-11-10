@@ -14,7 +14,7 @@ class SlackInfraMyTest:
         """
         チャンネルの投稿履歴を取得するメソッド
         """
-        channel = self.__slack.get_a_channel("annotation新卒")
+        channel = self.__slack.get_a_channel("public-channel")
         messages = self.__slack.get_channel_history(channel["id"])
 
         print(messages[0]["text"])
@@ -23,14 +23,14 @@ class SlackInfraMyTest:
         """
         チャンネルにメッセージを投稿するメソッド
         """
-        channel = self.__slack.get_a_channel("annotation新卒")
+        channel = self.__slack.get_a_channel("public-channel")
         print(self.__slack.post_message(channel, "テストメッセージ from python")["text"])
 
     def get_user_info(self):
         """
         ユーザー情報を取得するメソッド
         """
-        channel = self.__slack.get_a_channel("annotation新卒")
+        channel = self.__slack.get_a_channel("public-channel")
         messages = self.__slack.get_channel_history(channel["id"])
         user_info = self.__slack.get_user_info(messages[0]["user"])
         print(user_info["real_name"] + "さんが投稿しました")
@@ -39,7 +39,7 @@ class SlackInfraMyTest:
         """
         スレッドの投稿履歴を取得するメソッド
         """
-        channel = self.__slack.get_a_channel("annotation新卒")
+        channel = self.__slack.get_a_channel("public-channel")
         messages = self.__slack.get_channel_history(channel["id"])
         for message in messages:
             if "thread_ts" in message:
@@ -58,7 +58,7 @@ class SlackUsecaseMyTest:
         self.__slack = SlackUsecase()
 
     def search_messages(self):
-        messages = self.__slack.search_messages("annotation新卒", ["こんにちは", "こんばんは", "API"], 10000)
+        messages = self.__slack.search_messages("public-channel", ["こんにちは", "a", "API"], 10000)
         for message in messages:
             print(message["text"])
 

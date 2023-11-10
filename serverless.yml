@@ -87,10 +87,11 @@ functions:
     handler: src/get_slack_message.save_slack_messages_to_s3
     environment:
       REGION: ${self:provider.region}
-      SOURCE_CHANNEL_NAME: annotation新卒
-      REPORT_CHANNEL_NAME: nakashimatakeo通知
-      SEARCH_WORDS: こんにちは,こんばんは,API
-    timeout: 120
+      SOURCE_CHANNEL_NAME: public-channel
+      REPORT_CHANNEL_NAME: public-channel
+      SEARCH_WORDS: a,d
+    # リトライ処理を何回も行う場合があるので、タイムアウトを長めに設定
+    timeout: 600
     events:
       # 日本時間で毎日12時に実行
       - schedule: cron(0 3 ? * MON-FRI *)
