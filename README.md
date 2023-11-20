@@ -1,6 +1,8 @@
 ## 準備
+注意：macOS上でしか動かないパッケージが含まれているようです。
 ```
 npm install -g serverless
+npm install
 ```
 
 ## SLACKTOKENの設定
@@ -14,12 +16,16 @@ npm install -g serverless
 - chat:write
 - users:read
 
-### 通知先チャンネルにSlack Appを追加する
+#### 通知先チャンネルにSlack Appを追加する
+通知先のチャンネルに作成したアプリを追加してください。
+
+
+## AWS Profileの設定
+各自お任せします。
+権限はAdministratorAccess権限です。
+
 
 ## デプロイ
 ```
 sls deploy --aws-profile <profile>
 ```
-
-##
-sls install -u https://github.com/nakashima-takeo/python_slack_task.git
