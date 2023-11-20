@@ -208,7 +208,7 @@ class SlackInfrastructure:
                     if response.status_code == 429:
                         # レートリミットに達した場合、リセットまで待機
                         reset_time = int(response.headers["Retry-After"])
-                        print(f"{reset_time}秒ごにリトライします。")
+                        print(f"{reset_time}秒待機した後にリトライします。")
                         time.sleep(reset_time)
                     else:
                         raise Exception(f"SlackAPIのレスポンスがエラーです: {responseJson['error']}: {responseJson['response_metadata']}")
