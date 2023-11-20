@@ -1,4 +1,5 @@
 ## 準備
+git cloneした後に、以下のコマンドを実行してください。
 注意：macOS上でしか動かないパッケージが含まれているようです。
 ```
 npm install -g serverless
@@ -20,12 +21,12 @@ npm install
 通知先のチャンネルに作成したアプリを追加してください。
 
 
-## AWS Profileの設定
+### AWS Profileの設定
 各自お任せします。
 権限はAdministratorAccess権限です。
 
 
 ## デプロイ
 ```
-sls deploy --aws-profile <profile>
+sls deploy --aws-profile <profile名>
 ```
