@@ -1,5 +1,4 @@
 import json
-from typing import Dict
 
 import boto3
 
@@ -32,7 +31,7 @@ class SecretsManager:
         """
         # シークレットの値を取得する
         response = self.__secrets_client.get_secret_value(SecretId=secret_category)
-        secrets: Dict = json.loads(response["SecretString"])
+        secrets: dict = json.loads(response["SecretString"])
         token: str = secrets[secret_name]
         if token == "":
             return None

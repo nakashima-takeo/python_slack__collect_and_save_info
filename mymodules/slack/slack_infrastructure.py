@@ -1,4 +1,4 @@
-from typing import Dict, List
+import time
 
 import requests
 
@@ -22,7 +22,7 @@ class SlackInfrastructure:
         self.__thread_url = "https://slack.com/api/conversations.replies"
         self.__user_info_url = "https://slack.com/api/users.info"
 
-    def get_a_channel(self, channel_name: str) -> Dict | None:
+    def get_a_channel(self, channel_name: str) -> dict | None:
         """
         指定されたチャンネル名に一致するチャンネルを取得します。
 
@@ -33,7 +33,7 @@ class SlackInfrastructure:
 
         Returns
         -------
-        Dict or None
+        dict or None
           指定されたチャンネル名に一致するチャンネルの情報。見つからなかった場合はNone。
         """
         channels = self.get_all_channels()
@@ -41,27 +41,25 @@ class SlackInfrastructure:
             (channel for channel in channels if channel["name"] == channel_name),
         )
 
-    def get_all_channels(self) -> List[Dict]:
+    def get_all_channels(self) -> list[dict]:
         """
         全てのチャンネルの情報を取得します。
 
         Returns
         -------
-        List[Dict]
+        list[dict]
           全てのチャンネルの情報を含むリスト。
         """
-        payload: Dict = {
-            "types": "public_channel, private_channel",
+        channels: list[dict] = []
+        params: dict = {
+            "types": "public_channel",
             "limit": 1000,
         }
-        response = requests.get(self.__channel_list_url, headers=self.__headersAuth, params=payload)
-        response.raise_for_status()
-        if not response.json()["ok"]:
-            raise ValueError("チャンネルの取得に失敗しました")
-        channels = response.json()["channels"]
+        responses = self.__fetchSlackApi(self.__channel_list_url, "get", params=params)
+        channels = [channel for response in responses for channel in response["channels"]]
         return channels
 
-    def get_channel_history(self, channel_id: str, from_unixtime: int | None = None) -> List[Dict]:
+    def get_channel_history(self, channel_id: str, from_unixtime: int | None = None) -> list[dict]:
         """
         指定されたチャンネルの履歴を取得します。
 
@@ -74,79 +72,73 @@ class SlackInfrastructure:
 
         Returns
         -------
-        List[Dict]
+        list[dict]
           指定されたチャンネルの履歴を含むリスト。
         """
-        payload: Dict = {
+        messages: list[dict] = []
+        params: dict = {
             "channel": channel_id,
             "limit": 1000,
         }
         if from_unixtime is not None:
-            payload["oldest"] = from_unixtime
-        response = requests.get(self.__history_url, headers=self.__headersAuth, params=payload)
-        response.raise_for_status()
-        if not response.json()["ok"]:
-            raise ValueError("チャンネルの取得に失敗しました")
-        messages = response.json()["messages"]
+            params["oldest"] = from_unixtime
+        responses = self.__fetchSlackApi(self.__history_url, "get", params=params)
+        messages = [message for response in responses for message in response["messages"]]
         return messages
 
-    def get_thread_history(self, channel: Dict, original_message: Dict) -> List[Dict]:
+    def get_thread_history(self, channel: dict, original_message: dict) -> list[dict]:
         """
         指定されたスレッドの履歴を取得します。
 
         Parameters
         ----------
-        channel : Dict
+        channel : dict
           スレッドが存在するチャンネルの情報
-        original_message : Dict
+        original_message : dict
           スレッドの親メッセージ
 
         Returns
         -------
-        List[Dict]
-          指定されたスレッドの履歴を含むリスト。
+        list[dict]
+          指定されたスレッドの履歴。
         """
-        payload: Dict = {
+        messages: list[dict] = []
+        params: dict = {
             "channel": channel["id"],
             "ts": original_message["ts"],
         }
-        response = requests.get(self.__thread_url, headers=self.__headersAuth, params=payload)
-        response.raise_for_status()
-        messages = response.json()["messages"]
+        responses = self.__fetchSlackApi(self.__thread_url, "get", params=params)
+        messages = [message for response in responses for message in response["messages"]]
         return messages
 
-    def post_message(self, channel: Dict, text: str, original_message: Dict | None = None) -> Dict:
+    def post_message(self, channel: dict, text: str, original_message: dict | None = None) -> dict:
         """
         指定されたチャンネルにメッセージを投稿します。
 
         Parameters
         ----------
-        channel : Dict
+        channel : dict
           メッセージを投稿するチャンネルの情報
         text : str
           投稿するメッセージの本文
-        original_message : Dict or None
+        original_message : dict or None
           返信するメッセージの情報。指定しない場合はNone。
 
         Returns
         -------
-        Dict
+        dict
           投稿されたメッセージの情報。
         """
-        payload: Dict = {
+        params: dict = {
             "channel": channel["id"],
             "text": text,
         }
         if original_message is not None:
-            payload["thread_ts"] = original_message["thread_ts"]
-        response = requests.post(self.__post_message_url, headers=self.__headersAuth, params=payload)
-        response.raise_for_status()
-        message = response.json()
-        if not message["ok"]:
-            raise ValueError("メッセージの送信に失敗しました")
-        return message["message"]
+            params["thread_ts"] = original_message["thread_ts"]
+        responses = self.__fetchSlackApi(self.__post_message_url, "post", params=params)
+        return responses[0]["message"]
 
-    def get_user_info(self, user_id: str) -> Dict:
+    def get_user_info(self, user_id: str) -> dict:
         """
         指定されたユーザーの情報を取得します。
 
@@ -157,13 +149,78 @@ class SlackInfrastructure:
 
         Returns
         -------
-        Dict
+        dict
           指定されたユーザーの情報。
+
+        Raises
+        ------
+        ValueError
+          ユーザーが見つからなかった場合、複数見つかった場合に発生します。
         """
-        payload: Dict = {
+        params: dict = {
             "user": user_id,
         }
-        response = requests.get(self.__user_info_url, headers=self.__headersAuth, params=payload)
-        response.raise_for_status()
-        user_info = response.json()["user"]
+        responses = self.__fetchSlackApi(self.__user_info_url, "get", params=params)
+        if len(responses) == 0:
+            raise ValueError("ユーザーの取得に失敗しました")
+        elif len(responses) >= 2:
+            raise ValueError("ユーザーが複数見つかりました")
+        user_info = responses[0]["user"]
         return user_info
+
+    def __fetchSlackApi(self, url: str, method: str, params: dict) -> list[dict]:
+        """
+        SlackAPIを叩いてデータを取得する関数。
+
+        Parameters
+        ----------
+        url : str
+          SlackAPIのURL
+        method : str
+          HTTPメソッド
+        params : dict
+          SlackAPIに渡すパラメータ
+
+        Returns
+        -------
+        list[dict]
+          SlackAPIのレスポンスのリスト
+
+        Raises
+        ------
+        Exception
+          SlackAPIのレスポンスがエラーの場合に発生する例外
+        """
+        cursor = None
+        responses: list[dict] = []
+        # 再帰処理で全てのデータを取得する
+        while True:
+            if cursor is not None:
+                params["cursor"] = cursor
+
+            # SlackAPIを叩く（成功するまで再試行する）
+            while True:
+                response = requests.request(method=method, url=url, headers=self.__headersAuth, params=params)
+                responseJson = response.json()
+                if responseJson["ok"] is True:
+                    break
+                else:
+                    if response.status_code == 429:
+                        # レートリミットに達した場合、リセットまで待機
+                        reset_time = int(response.headers["Retry-After"])
+                        print(f"{reset_time}秒待機した後にリトライします。")
+                        time.sleep(reset_time)
+                    else:
+                        raise Exception(f"SlackAPIのレスポンスがエラーです: {responseJson['error']}: {responseJson['response_metadata']}")
+
+            # ページネーションの処理
+            if "has_more" in responseJson:
+                if responseJson["has_more"] is True:
+                    cursor = responseJson["response_metadata"]["next_cursor"]
+                else:
+                    cursor = None
+
+            responses.append(responseJson)
+            if cursor is None:
+                break
+        return responses
