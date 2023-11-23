@@ -1,12 +1,54 @@
 import datetime
 import os
 
-from modules.aws.S3 import S3
-from modules.slack.slack_usecase import SlackUsecase
+from mymodules.aws import S3, ParameterStore
+from mymodules.slack import Slack
 
 
 def save_slack_messages_to_s3(event, context) -> None:
-    slack = SlackUsecase()
+    """
+    Slackからメッセージを取得し、指定されたS3バケットに保存します。
+    また、そのS3のリンクを指定されたSlackチャンネルに投稿します。
+
+    Parameters
+    ----------
+    event : dict
+        AWS Lambdaのイベントオブジェクト
+    context : dict
+        AWS Lambdaのコンテキストオブジェクト
+
+    Returns
+    -------
+    None
+        何も返しません。
+
+    Raises
+    ------
+    SlackApiError
+        Slack APIがエラーを返した場合に発生します。
+
+    Notes
+    -----
+    この関数は、指定されたSlackチャンネルから指定された検索ワードを含むメッセージを取得し、
+    S3バケットに保存します。また、取得したメッセージを一つのテキストファイルにまとめ、
+    S3バケットにアップロードします。最後に、取得したメッセージの情報を含むSlackメッセージを
+    指定されたチャンネルに投稿します。
+
+    Examples
+    --------
+    >>> save_slack_messages_to_s3(event, context)
+    """
+    # SlackTokenを取得する
+    region = os.environ["REGION"]
+    parameter_store = ParameterStore(region)
+    slack_token: str = parameter_store.get_parameter("python_slack_app_token")
+    if slack_token is None:
+        raise ValueError("SLACK_API_TOKENが設定されていません")
+
+    # Slackクラスを作成する
+    slack = Slack(slack_token)
+
+    # Slackの各種設定を取得する
     source_channel_name: str = os.environ["SOURCE_CHANNEL_NAME"]
     report_channel_name: str = os.environ["REPORT_CHANNEL_NAME"]
     search_words: list[str] = os.environ["SEARCH_WORDS"].split(",")
