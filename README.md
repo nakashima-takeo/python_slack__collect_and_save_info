@@ -1,6 +1,6 @@
 ## 準備
 git cloneした後に、以下のコマンドを実行してください。
-注意：macOS上でしか動かないパッケージが含まれているようです。
+
 ```
 npm install -g serverless
 npm install
